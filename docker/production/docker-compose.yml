@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-spotter}
+      POSTGRES_USER: ${POSTGRES_USER:-spotter}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-spotter}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-spotter}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/production/Dockerfile
+      target: runtime
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DATABASE_URL: postgres://${POSTGRES_USER:-spotter}:${POSTGRES_PASSWORD:-spotter}@db:5432/${POSTGRES_DB:-spotter}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      DJANGO_SECURE_SSL_REDIRECT: "False"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_data:/app/staticfiles
+
+volumes:
+  postgres_data:
+  static_data:

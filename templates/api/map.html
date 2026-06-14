@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Fuel Route Planner{% endblock %}
+
+{% block content %}
+<div id="map"></div>
+
+<aside class="panel" id="panel">
+  <header class="panel__header">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">⛽</span>
+      <div>
+        <h1 class="brand__title">Fuel Route Planner</h1>
+        <p class="brand__tagline">Cheapest fuel stops across the USA</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="map-styles" id="map-styles" role="group" aria-label="Map style">
+    <button type="button" class="map-styles__btn is-active" data-style="liberty">Streets</button>
+    <button type="button" class="map-styles__btn" data-style="positron">Light</button>
+    <button type="button" class="map-styles__btn" data-style="bright">Bright</button>
+    <button type="button" class="map-styles__btn" data-style="dark">Dark</button>
+  </div>
+
+  <form id="route-form" class="route-form" autocomplete="off">
+    <div class="field">
+      <label for="start_location">From</label>
+      <div class="field__input field__input--start">
+        <input type="text" id="start_location" name="start_location"
+               placeholder="e.g. Chicago, IL" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="finish_location">To</label>
+      <div class="field__input field__input--finish">
+        <input type="text" id="finish_location" name="finish_location"
+               placeholder="e.g. Denver, CO" required>
+      </div>
+    </div>
+
+    <button type="submit" id="submit-button" class="btn-primary">
+      <span class="btn-primary__label">Plan route</span>
+      <span class="btn-primary__spinner" aria-hidden="true"></span>
+    </button>
+  </form>
+
+  <div id="status" class="status" role="status"></div>
+
+  <section id="summary" class="summary hidden">
+    <div class="stats">
+      <div class="stat">
+        <span class="stat__label">Distance</span>
+        <span class="stat__value" id="summary-distance">—</span>
+      </div>
+      <div class="stat stat--accent">
+        <span class="stat__label">Total fuel cost</span>
+        <span class="stat__value" id="summary-cost">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label">Vehicle</span>
+        <span class="stat__value stat__value--sm" id="summary-assumptions">—</span>
+      </div>
+    </div>
+
+    <h2 class="summary__heading">Recommended stops</h2>
+    <ol id="stops-list" class="stops"></ol>
+  </section>
+
+  <footer class="panel__footer">
+    <a class="panel__hub" href="{% url 'developers' %}">API &amp; developer docs →</a>
+    <div class="panel__credit">
+      Map data &copy; OpenStreetMap · Tiles by
+      <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>
+    </div>
+  </footer>
+</aside>
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/map.js' %}"></script>
+{% endblock %}

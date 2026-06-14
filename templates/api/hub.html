@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Hub — Fuel Route Planner</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="page-hub">
+  <main class="hub">
+    <header class="hub__header">
+      <span class="hub__mark" aria-hidden="true">⛽</span>
+      <h1>Spotter Fuel Route API</h1>
+      <p>Developer hub — the app, the live API, and the documentation.</p>
+    </header>
+
+    <div class="hub__grid">
+      <a class="hub-card" href="{% url 'map' %}">
+        <span class="hub-card__icon" aria-hidden="true">🗺️</span>
+        <h2>Route Planner</h2>
+        <p>Interactive map to plan a trip and view the cheapest fuel stops.</p>
+        <span class="hub-card__path">/</span>
+      </a>
+
+      <a class="hub-card" href="{% url 'swagger-ui' %}" target="_blank" rel="noopener">
+        <span class="hub-card__ext" aria-hidden="true">↗</span>
+        <span class="hub-card__icon" aria-hidden="true">🧪</span>
+        <h2>Swagger UI</h2>
+        <p>Interactive API docs — fire real requests and see live responses.</p>
+        <span class="hub-card__path">/api/docs/</span>
+      </a>
+
+      <a class="hub-card" href="{% url 'redoc' %}" target="_blank" rel="noopener">
+        <span class="hub-card__ext" aria-hidden="true">↗</span>
+        <span class="hub-card__icon" aria-hidden="true">📘</span>
+        <h2>ReDoc</h2>
+        <p>Clean, readable API reference generated from the schema.</p>
+        <span class="hub-card__path">/api/redoc/</span>
+      </a>
+
+      <a class="hub-card" href="{% url 'schema' %}" target="_blank" rel="noopener">
+        <span class="hub-card__ext" aria-hidden="true">↗</span>
+        <span class="hub-card__icon" aria-hidden="true">📄</span>
+        <h2>OpenAPI Schema</h2>
+        <p>The raw OpenAPI 3.0 specification (YAML).</p>
+        <span class="hub-card__path">/api/schema/</span>
+      </a>
+
+      <a class="hub-card" href="{% url 'api:route-plan' %}" target="_blank" rel="noopener">
+        <span class="hub-card__ext" aria-hidden="true">↗</span>
+        <span class="hub-card__icon" aria-hidden="true">🔌</span>
+        <h2>Route Plan Endpoint</h2>
+        <p>The JSON API endpoint (POST), browsable via DRF.</p>
+        <span class="hub-card__path">/api/v1/route-plan/</span>
+      </a>
+
+      <a class="hub-card" href="{% url 'admin:index' %}" target="_blank" rel="noopener">
+        <span class="hub-card__ext" aria-hidden="true">↗</span>
+        <span class="hub-card__icon" aria-hidden="true">⚙️</span>
+        <h2>Admin</h2>
+        <p>Django admin to browse the loaded fuel stations.</p>
+        <span class="hub-card__path">/admin/</span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

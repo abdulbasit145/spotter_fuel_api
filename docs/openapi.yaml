@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: Spotter Fuel Route API
+  version: 1.0.0
+  description: Given a start and finish location in the USA, returns the driving route,
+    the cheapest set of fuel stops for a 500-mile-range / 10-MPG vehicle, and the
+    total fuel cost.
+paths:
+  /api/v1/route-plan/:
+    post:
+      operationId: v1_route_plan_create
+      description: |-
+        Plan an optimal fuel-up strategy for a road trip within the US.
+
+        ``POST`` body::
+
+            {"start_location": "Seattle, WA", "finish_location": "Miami, FL"}
+
+        The response contains the driving route geometry, the total trip
+        distance, the recommended fuel stops (with how much fuel to buy at
+        each one) and the total amount that will be spent on fuel,
+        assuming a 500-mile range and 10 miles per gallon.
+      summary: Plan the cheapest fuel stops for a US road trip
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteRequest'
+            examples:
+              SeattleToMiami:
+                value:
+                  start_location: Seattle, WA
+                  finish_location: Miami, FL
+                summary: Seattle to Miami
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RouteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RouteRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteResponse'
+          description: ''
+        '400':
+          description: Invalid input, or a location that could not be geocoded or
+            routed.
+        '422':
+          description: The trip cannot be completed within the vehicle range using
+            the available stations.
+components:
+  schemas:
+    FuelStop:
+      type: object
+      description: A single recommended fuel purchase.
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        distance_from_start_miles:
+          type: number
+          format: double
+        price_per_gallon:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,3})?$
+        gallons_purchased:
+          type: number
+          format: double
+        cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+      required:
+      - address
+      - city
+      - cost
+      - distance_from_start_miles
+      - gallons_purchased
+      - latitude
+      - longitude
+      - name
+      - price_per_gallon
+      - state
+    RouteRequest:
+      type: object
+      description: Input payload for the route fuel plan endpoint.
+      properties:
+        start_location:
+          type: string
+          maxLength: 255
+        finish_location:
+          type: string
+          maxLength: 255
+      required:
+      - finish_location
+      - start_location
+    RouteResponse:
+      type: object
+      description: Full response payload for the route fuel plan endpoint.
+      properties:
+        start_location:
+          type: string
+        finish_location:
+          type: string
+        total_distance_miles:
+          type: number
+          format: double
+        total_fuel_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        vehicle_range_miles:
+          type: integer
+        miles_per_gallon:
+          type: integer
+        route_geometry:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+          description: Ordered list of [latitude, longitude] pairs tracing the driving
+            route.
+        fuel_stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/FuelStop'
+      required:
+      - finish_location
+      - fuel_stops
+      - miles_per_gallon
+      - route_geometry
+      - start_location
+      - total_distance_miles
+      - total_fuel_cost
+      - vehicle_range_miles
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
