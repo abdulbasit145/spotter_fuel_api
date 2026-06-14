@@ -67,6 +67,11 @@ class RouteFuelPlanView(APIView):
     assuming a 500-mile range and 10 miles per gallon.
     """
 
+    # Public, anonymous, throttled endpoint — no auth. This also avoids
+    # SessionAuthentication's CSRF enforcement, which otherwise breaks the
+    # browser fetch whenever a Django admin session cookie is present.
+    authentication_classes = []
+
     def post(self, request, *args, **kwargs):
         request_serializer = RouteRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
