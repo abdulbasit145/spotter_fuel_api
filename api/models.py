@@ -3,7 +3,17 @@ import uuid
 from django.db import models
 
 
-class FuelStation(models.Model):
+class TimestampedModel(models.Model):
+    """Abstract base that adds self-managed fields to model"""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class FuelStation(TimestampedModel):
     """A fuel retailer location with its current diesel price.
 
     Stations are geocoded once when the fixture/CSV is loaded via the
